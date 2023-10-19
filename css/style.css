@@ -1,0 +1,136 @@
+/* Global styles */
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f0f0f0;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #333;
+  color: #fff;
+  padding: 20px; /* Increased padding */
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+  font-size: 24px; /* Increased font size */
+}
+
+section {
+  background-color: #fff;
+  padding: 20px;
+  margin: 10px;
+  border-radius: 5px;
+}
+
+label {
+  font-weight: bold;
+  font-size: 16px; /* Increased font size */
+}
+
+input,
+button {
+  display: block;
+  margin: 10px 0;
+  padding: 10px; /* Increased padding */
+  width: 100%;
+  font-size: 16px; /* Increased font size */
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 10px;
+  font-size: 16px; /* Increased font size */
+}
+
+button {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 15px; /* Increased padding */
+  cursor: pointer;
+  font-size: 18px; /* Increased font size */
+}
+
+footer {
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 10px; /* Increased padding */
+  font-size: 14px; /* Increased font size */
+}
+
+/* Style for the "Your Workout Plan" section */
+#workout-list {
+  font-weight: bold;
+  font-size: 18px; /* Increased font size */
+}
+
+#workout-list li {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  font-size: 16px; /* Increased font size */
+}
+
+#workout-list li:hover {
+  background-color: #e0e0e0;
+}
+
+/* Style for the progress bar */
+#progress-bar {
+  width: 100%;
+}
+
+.exercise {
+  color: #FF5733; /* Change this to your desired color */
+  font-size: 20px; /* Increased font size */
+}
+
+.rest {
+  color: #33FF57; /* Change this to your desired color */
+  font-size: 20px; /* Increased font size */
+}
+
+.duration {
+  color: #5733FF; /* Change this to your desired color */
+  font-size: 20px; /* Increased font size */
+}
+
+#timer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+}
+
+#timer {
+  font-size: 500px; /* Increased font size */
+  text-align: center;
+  margin-bottom: 20px; /* Increased spacing */
+}
+
+#countdown {
+  font-size: 28px; /* Increased font size */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#current-activity-container {
+  text-align: center;
+}
+
+#current-activity {
+  font-size: 120px; /* Increased font size */
+  /* Add your exercise color */
+  color: #FF5733; /* You can use the initial color or set it dynamically based on user input */
+}

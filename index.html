@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <head>
+    <meta charset="UTF-8">
+    <title>My Circuit Training Timer</title>
+  </head>
+  <body>
+    <audio id="beep-start" preload="auto">
+      <source src="audio/beep-start.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="beep-finish" preload="auto">
+      <source src="audio/beep-finish.mp3" type="audio/mpeg">
+    </audio>
+    
+
+    <header>
+      <h1>Welcome to My Circuit Training Timer</h1>
+    </header>
+
+    <section>
+      <h2>Create Your Workout</h2>
+      <form>
+        <label for="exercise">Exercise Name:</label>
+        <input type="text" id="exercise" name="exercise" required>
+        <br>
+
+        <label for="duration">Exercise Duration (seconds):</label>
+        <input type="number" id="duration" name="duration" min="1" required>
+        <br>
+
+        <label for="rest">Rest Duration (seconds):</label>
+        <input type="number" id="rest" name="rest" min="0" required>
+        <br>
+
+        <!-- Dropdown menu for exercise color -->
+        <label for="exercise-color">Exercise Color:</label>
+        <select id="exercise-color" name="exercise-color">
+          <option value="#FF5733">Red</option>
+          <option value="#33FF57">Green</option>
+          <option value="#5733FF">Blue</option>
+          <option value="#FFD700">Gold</option>
+          <option value="#FFA07A">Light Salmon</option>
+          <!-- Add more color options for exercise as needed -->
+        </select>
+        <br>
+
+        <!-- Dropdown menu for rest color -->
+        <label for="rest-color">Rest Color:</label>
+        <select id="rest-color" name="rest-color">
+          <option value="#33FF57">Green</option>
+          <option value="#5733FF">Blue</option>
+          <option value="#FFD700">Gold</option>
+          <option value="#FFA07A">Light Salmon</option>
+          <option value="#8A2BE2">Blue Violet</option>
+          <!-- Add more color options for rest as needed -->
+        </select>
+        <br>
+
+        <button type="button" onclick="addExercise()">Add Exercise</button>
+      </form>
+    </section>
+
+    <section>
+      <h2>Your Workout Plan</h2>
+      <ul id="workout-list">
+        <!-- Workout items will be added here dynamically -->
+      </ul>
+
+      <div id="total-duration">Total Duration: 0s</div>
+    </section>
+
+    <section>
+  <h2>Start Your Timer</h2>
+  <div id="countdown">Countdown: 5</div>
+  <div id="timer-container">
+    <div id="timer">00:00</div>
+  </div>
+  <div id="current-activity-container">
+    <div id="current-activity">Get Ready!</div>
+  </div>
+  <button id="start-button" onclick="startCountdown()">Start Timer</button>
+  <div id="timer-controls">
+    <button id="pause-button" onclick="pauseTimer()">Pause</button>
+    <button id="restart-button" onclick="restartTimer()">Restart</button>
+  </div>
+</section>
+
+    <footer>
+      <p>&copy; 2023 My Circuit Training Timer</p>
+    </footer>
+
+    <script>
+      let totalDuration = 0;
+      let timerInterval;
+      let currentDuration = 0;
+      let currentExerciseIndex = 0;
+      let isExercisePhase = true;
+      let exercises = [];
+
+      function addExercise() {
+        // Get input values from the form
+        const exerciseName = document.getElementById("exercise").value;
+        const exerciseDuration = parseFloat(
+          document.getElementById("duration").value
+        );
+        const restDuration = parseFloat(document.getElementById("rest").value);
+        const exerciseColor = document.getElementById("exercise-color").value;
+        const restColor = document.getElementById("rest-color").value;
+
+        // Check if any of the fields are empty or if duration is not a number
+        if (!exerciseName || isNaN(exerciseDuration) || isNaN(restDuration)) {
+          alert(
+            "Please fill in all fields and make sure duration is a number before adding the exercise."
+          );
+          return; // Stop the function if any field is empty or duration is not a number
+        }
+
+        // Create a new exercise object and add it to the exercises array
+        const exercise = {
+          name: exerciseName,
+          duration: exerciseDuration,
+          rest: restDuration,
+          exerciseColor: exerciseColor,
+          restColor: restColor,
+        };
+        exercises.push(exercise);
+
+        // Create a new list item to display the exercise
+        const exerciseItem = document.createElement("li");
+        exerciseItem.textContent = `Exercise: ${exerciseName}, Duration: ${exerciseDuration}s`;
+        exerciseItem.style.color = exerciseColor; // Set the text color for exercise
+
+        // Create a span element for rest text and set its color
+        const restSpan = document.createElement("span");
+        restSpan.textContent = `Rest: ${restDuration}s`;
+        restSpan.style.color = restColor; // Set the text color for rest
+
+        // Append the rest text to the exercise list item
+        exerciseItem.appendChild(document.createTextNode(", "));
+        exerciseItem.appendChild(restSpan);
+
+        // Append the new exercise to the workout plan list
+        const workoutList = document.getElementById("workout-list");
+        workoutList.appendChild(exerciseItem);
+
+        // Clear the form inputs
+        document.getElementById("exercise").value = "";
+        document.getElementById("duration").value = "";
+        document.getElementById("rest").value = "";
+
+        // Update the total duration
+        totalDuration += exerciseDuration + restDuration;
+        updateTotalDuration();
+      }
+
+      function updateTotalDuration() {
+        const totalDurationElement = document.getElementById("total-duration");
+        const hours = Math.floor(totalDuration / 3600);
+        const minutes = Math.floor((totalDuration % 3600) / 60);
+        const seconds = totalDuration % 60;
+        totalDurationElement.textContent = `Total Duration: ${hours}h ${minutes}m ${seconds}s`;
+      }
+
+      function startCountdown() {
+        const countdownElement = document.getElementById("countdown");
+        const startButton = document.getElementById("start-button");
+        startButton.disabled = true; // Disable the "Start Timer" button during countdown
+
+        let countdown = 5; // Initialize the countdown value
+
+        countdownInterval = setInterval(function () {
+          countdown = parseFloat(countdown); // Ensure countdown is a number
+          countdownElement.textContent = `Countdown: ${countdown}`;
+
+          if (countdown === 1) {
+            // Set the current activity text to display on the last second
+            document.getElementById("current-activity").textContent = "Get Ready!";
+            const audioCue2 = document.getElementById("beep-finish");
+            audioCue2.play();
+          } else {
+            // Set the current activity text based on the countdown value
+            if (countdown === 5) {
+              document.getElementById("current-activity").textContent = "Get Ready!";
+            } else if (countdown === 4) {
+              document.getElementById("current-activity").textContent = "Get Ready!";
+              const audioCue1 = document.getElementById("beep-start");
+              audioCue1.play();
+            } else if (countdown === 3) {
+              document.getElementById("current-activity").textContent = "Get Ready!";
+              const audioCue1 = document.getElementById("beep-start");
+              audioCue1.play();
+            } else if (countdown === 2) {
+              document.getElementById("current-activity").textContent = "Get Ready!";
+              const audioCue1 = document.getElementById("beep-start");
+              audioCue1.play();
+            }
+          }
+
+          countdown--;
+          if (countdown < 0) {
+            clearInterval(countdownInterval);
+            startButton.disabled = false; // Enable the "Start Timer" button
+            countdownElement.style.display = "none"; // Hide the countdown element
+            startTimer();
+          }
+        }, 1000);
+      }
+
+      function startTimer() {
+  const timerElement = document.getElementById("timer");
+
+  clearInterval(timerInterval);
+
+  if (exercises.length === 0) {
+    alert("No exercises to time.");
+    return;
+  }
+
+  let exerciseIndex = 0;
+  let exerciseTime = exercises[exerciseIndex].duration;
+  let restTime = exercises[exerciseIndex].rest;
+
+  timerInterval = setInterval(function () {
+    currentDuration++;
+    const remainingSeconds = totalDuration - currentDuration;
+    const minutes = Math.floor(remainingSeconds / 60);
+    const seconds = remainingSeconds % 60;
+    const minutesFormatted = minutes < 10 ? `0${minutes}` : minutes;
+    const secondsFormatted = seconds < 10 ? `0${seconds}` : seconds;
+    timerElement.textContent = `${minutesFormatted}:${secondsFormatted}`;
+
+    if (remainingSeconds <= 0) {
+      clearInterval(timerInterval);
+      timerElement.textContent = "00:00";
+      alert("Exercise completed!");
+      return;
+    }
+
+    if (exerciseTime > 0) {
+    // Display exercise name with the chosen color
+    document.getElementById("current-activity").textContent = "Exercise: " + exercises[exerciseIndex].name;
+    document.getElementById("current-activity").style.color = exercises[exerciseIndex].exerciseColor;
+    exerciseTime--;
+} else if (restTime > 0) {
+    // Display "Rest" with the chosen rest color
+    document.getElementById("current-activity").textContent = "Rest";
+    document.getElementById("current-activity").style.color = exercises[exerciseIndex].restColor;
+    restTime--;
+}
+
+    if (exerciseTime === 0 && restTime === 0) {
+      // Switch to the next exercise
+      exerciseIndex++;
+      if (exerciseIndex < exercises.length) {
+        exerciseTime = exercises[exerciseIndex].duration;
+        restTime = exercises[exerciseIndex].rest;
+      } else {
+        // Restart the exercise cycle
+        exerciseIndex = 0;
+        exerciseTime = exercises[exerciseIndex].duration;
+        restTime = exercises[exerciseIndex].rest;
+      }
+    }
+  }, 1000);
+}
+
+let timerPaused = false;
+let timerPausedAt = -1; // Store the timestamp when paused
+
+function pauseTimer() {
+  if (!timerPaused) {
+    clearInterval(timerInterval);
+    timerPaused = true;
+    timerPausedAt = Date.now(); // Store the current timestamp
+    document.getElementById("pause-button").textContent = "Resume";
+  } else {
+    startTimer();
+    timerPaused = false;
+
+    // Adjust the remaining time based on the time elapsed when paused
+    const elapsedTime = Date.now() - timerPausedAt;
+    if (isExercisePhase) {
+      exerciseTime -= Math.floor(elapsedTime / 1000);
+    } else {
+      restTime -= Math.floor(elapsedTime / 1000);
+    }
+
+    document.getElementById("pause-button").textContent = "Pause";
+  }
+}
+
+
+function restartTimer() {
+  clearInterval(timerInterval);
+  currentDuration = 0;
+  timerPausedAt = -1; // Reset the timestamp
+  timerPaused = false;
+  document.getElementById("pause-button").textContent = "Pause";
+
+  if (isExercisePhase) {
+    exerciseTime = exercises[currentExerciseIndex].duration;
+    restTime = 0;
+  } else {
+    restTime = exercises[currentExerciseIndex].rest;
+    exerciseTime = 0;
+  }
+
+  document.getElementById("current-activity").textContent = "Get Ready!";
+  startCountdown();
+}
+
+
+
+
+    </script>
+  </body>
+</html>
