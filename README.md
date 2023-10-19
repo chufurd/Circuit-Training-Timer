@@ -11,4 +11,14 @@ Circuit Training Timer is a web application that helps you create and manage cus
 - Countdown feature to prepare for your workout.
 - Track total workout duration.
 
+## Built With
+
+- [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML)
+- [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)
+- [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+
+## Author
+
+Jesus Rodriguez
+
 
